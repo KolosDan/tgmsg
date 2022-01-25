@@ -17,6 +17,7 @@ class TelegramClient(object):
         self.first_name = self.get_me().get('first_name')
         self._message_processor = None
         self._callback_query_processor = None
+        self._poll_answer_processor = None
 
     def register_message_processor(self):
         def add(processor):
@@ -28,6 +29,13 @@ class TelegramClient(object):
     def register_callback_query_processor(self):
         def add(processor):
             self._callback_query_processor = processor
+            return processor
+
+        return add
+
+    def register_poll_answer_processor(self):
+        def add(processor):
+            self._poll_answer_processor = processor
             return processor
 
         return add
@@ -44,6 +52,10 @@ class TelegramClient(object):
             if not self._message_processor:
                 raise AttributeError('_message_processor not declared')
             return self._message_processor(update)
+        elif hasattr(update, "poll_answer"):
+            if not self._poll_answer_processor:
+                raise AttributeError("_poll_answer_processor is not declared")
+            return self._poll_answer_processor(update)
         else:
             raise Exception('Now available just message and callback_query')
 

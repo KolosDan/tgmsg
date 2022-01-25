@@ -40,6 +40,14 @@ class CallbackQuery(object):
             setattr(self, key, kwargs[key])
 
 
+class PollAnswer(object):
+    def __init__(self, **kwargs):
+        for key in kwargs:
+            if key == "user":
+                kwargs[key] = User(**kwargs[key])
+            setattr(self, key, kwargs[key])
+
+
 class Update(object):
     def __init__(self, update_id: int, **kwargs):
         self.update_id = update_id
@@ -48,4 +56,6 @@ class Update(object):
                 kwargs[key] = CallbackQuery(**kwargs[key])
             if key == 'message':
                 kwargs[key] = IncomingMessage(**kwargs[key])
+            if key == "poll_answer":
+                kwargs[key] = PollAnswer(**kwargs[key])
             setattr(self, key, kwargs[key])
